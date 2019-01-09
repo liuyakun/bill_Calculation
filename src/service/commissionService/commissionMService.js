@@ -7,7 +7,7 @@ const pageListApi = '/api/plat/commission/queryPageableData/{page}/{limit}';    
 const modifyApi = '/api/plat/commission/queryPageableData/modify';                    // 修改                  method 'post'
 
 // 分页列表
-export const findOperatePageList = (opt, para) => fetch.get(apiFormat(pageListApi, opt), {params: para});
+export const findOperatePageList = (opt, payload) => fetch.post(apiFormat(pageListApi, opt), payload);
 
 // 修改
 export const modifyFun = (payload) => fetch.post(modifyApi, payload);

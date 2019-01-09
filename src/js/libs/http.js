@@ -5,7 +5,6 @@ import axios from 'axios';
 import router from '@/router/';
 import store from '@/store/';
 import { Message } from 'element-ui';
-import {Notice} from 'iview';
 import _hyTool from '@/js/core/utils/tool';                               	 // 全局方法
 
 axios.defaults.timeout = 3000;
@@ -25,12 +24,7 @@ axios.interceptors.request.use(function (config) {
 });
 
 axios.interceptors.response.use(function (response) {
-    if (response.data.code === 'SUCCESS') {
-        return Promise.resolve(response.data);
-    } else {
-        Notice.error({title: '请求错误', desc: response.data.message});
-        return Promise.reject(response.data.message);
-    }
+  return Promise.resolve(response.data);
 }, function (error) {
     if (error.response) {
         switch (error.response.status) {
@@ -41,7 +35,7 @@ axios.interceptors.response.use(function (response) {
                     message: '登录超时， 请重新登录！'
                 });
                 router.replace({
-                    path: '/appStore/login',
+                    path: '/login',
                     query: {redirect: router.currentRoute.fullPath}
                 });
                 break;

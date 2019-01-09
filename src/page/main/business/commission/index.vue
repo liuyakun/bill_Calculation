@@ -8,7 +8,7 @@
     </div>
     <div class="table-content">
       <el-table
-        :data="tableList"
+        :data="list"
         v-loading="loading"
         :element-loading-text="loadingText"
         style="width: 100%"
@@ -73,11 +73,9 @@
             <i-input v-model="modalFormData.priceMax"  placeholder="最大价格" :disabled ="true" :maxlength="20"></i-input>
           </FormItem>
           <FormItem label="佣金" prop="commission">
-            <!--<i-input v-model="modalFormData.commission"  placeholder="佣金" :maxlength="20"></i-input>-->
             <InputNumber :min="1" v-model="modalFormData.commission" style="width: 100%"></InputNumber>
           </FormItem>
           <FormItem label="成本佣金" prop="commissionCost">
-            <!--<i-input v-model="modalFormData.commissionCost" placeholder="成本佣金" :maxlength="20"></i-input>-->
             <InputNumber :min="1" v-model="modalFormData.commissionCost" style="width: 100%"></InputNumber>
           </FormItem>
         </Form>
@@ -136,8 +134,8 @@
           if (this.searchClick) this.checkSearchData = Object.assign({}, this.searchData);
           let result = await findOperatePageList(para, this.checkSearchData);
           this.loading = false;
-          this.list = result.data.list || [];
-          this.totalElement = result.data.totalData;
+          this.list = result.dataList || [];
+          this.totalElement = result.totalCount;
           this.searchClick = false;
         } catch (e) {
           this.loading = false;

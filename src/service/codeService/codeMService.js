@@ -3,13 +3,13 @@
  */
 import { fetch, apiFormat } from '@/service/baseService';
 
-const pageListApi = '/api/plat/commission/queryPageableData/{page}/{limit}';          // 分页列表              method 'get'
-const addApi = '/api/plat/commission/queryPageableData/add';                          // 新增                  method 'post'
-const modifyApi = '/api/plat/commission/queryPageableData/modify';                    // 修改                  method 'post'
-const deleteApi = '/api/plat/commission/queryPageableData/del';                       // 删除                  method 'delete'
+const pageListApi = '/api/plat/cardManagement/queryPageableData/{page}/{limit}';          // 分页列表              method 'get'
+const addApi = '/api/plat/cardManagement/create';                          // 新增                  method 'post'
+const modifyApi = '/api/plat/cardManagement/modify';                    // 修改                  method 'post'
+const deleteApi = '/api/plat/cardManagement/del';                       // 删除                  method 'delete'
 
 // 分页列表
-export const findOperatePageList = (opt, para) => fetch.get(apiFormat(pageListApi, opt), {params: para});
+export const findOperatePageList = (opt, para) => fetch.post(apiFormat(pageListApi, opt));
 
 // 新增
 export const addFun = (payload) => fetch.post(addApi, payload);

@@ -5,16 +5,12 @@
   <div class="content">
     <div class="lk-search-bar">
       <Form label-position="right" inline :label-width="60">
-        <FormItem label="卡号">
-          <i-input placeholder="卡号" v-model="searchData.name"></i-input>
-        </FormItem>
-        <i-button type="success" icon="ios-search" class="lk-search-button" @click="search" shape="circle" :loading="loading">搜索</i-button>
         <i-button type="success" icon="plus-round" class="lk-search-button" @click="clickAddOrUpdate()" shape="circle">新增</i-button>
       </Form>
     </div>
     <div class="table-content">
       <el-table
-        :data="tableList"
+        :data="list"
         v-loading="loading"
         :element-loading-text="loadingText"
         style="width: 100%"
@@ -26,13 +22,7 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="codeName"
-          label="帐号名称"
-          show-overflow-tooltip
-          align="center">
-        </el-table-column>
-        <el-table-column
-          prop="codeNum"
+          prop="cardid"
           label="帐号卡号"
           show-overflow-tooltip
           align="center">
@@ -87,11 +77,7 @@
         modalFormData: {},
         modalFormItem: [
           {
-            key: 'codeName',
-            title: '账户名称'
-          },
-          {
-            key: 'codeNum',
+            key: 'cardid',
             title: '帐号卡号'
           }
         ],
@@ -102,15 +88,12 @@
       async _getList () {
         try {
           this.loading = true;
-          let para = {
-            page: this.searchData.page,
-            limit: this.searchData.limit
-          };
+          let para = {page: this.searchData.page, limit: this.searchData.limit};
           if (this.searchClick) this.checkSearchData = Object.assign({}, this.searchData);
           let result = await findOperatePageList(para, this.checkSearchData);
           this.loading = false;
-          this.list = result.data.list || [];
-          this.totalElement = result.data.totalData;
+          this.list = result.dataList || [];
+          this.totalElement = result.totalCount;
           this.searchClick = false;
         } catch (e) {
           this.loading = false;
@@ -160,6 +143,7 @@
         }).then(async () => {
           await deleteFun({id: row.id});
           this.$Notice.success({title: '删除成功'});
+          this.currentChange(1);
         }).catch(() => {
         });
       }

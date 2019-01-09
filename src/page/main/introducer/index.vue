@@ -5,16 +5,12 @@
   <div class="content">
     <div class="lk-search-bar">
       <Form label-position="right" inline :label-width="80">
-        <FormItem label="介绍人姓名">
-          <i-input placeholder="介绍人姓名" v-model="searchData.name"></i-input>
-        </FormItem>
-        <i-button type="success" icon="ios-search" class="lk-search-button" @click="search" shape="circle" :loading="loading">搜索</i-button>
         <i-button type="success" icon="plus-round" class="lk-search-button" @click="clickAddOrUpdate()" shape="circle">新增</i-button>
       </Form>
     </div>
     <div class="table-content">
       <el-table
-        :data="tableList"
+        :data="list"
         v-loading="loading"
         :element-loading-text="loadingText"
         style="width: 100%"
@@ -26,7 +22,7 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="name"
+          prop="nameReferrer"
           label="介绍人姓名"
           show-overflow-tooltip
           align="center">
@@ -58,7 +54,7 @@
 <script>
   import HyFormItem from '@/components/formItem/formItem.vue';
   import list from '@/js/mixins/list';
-  import { findOperatePageList, addFun, modifyFun, deleteFun } from '@/service/codeService/codeMService';
+  import { findOperatePageList, addFun, modifyFun, deleteFun } from '@/service/introducerService/introducerMService';
   export default {
     mixins: [list],
     components: {
@@ -78,7 +74,7 @@
         modalFormData: {},
         modalFormItem: [
           {
-            key: 'name',
+            key: 'nameReferrer',
             title: '介绍人姓名'
           }
         ],
@@ -96,8 +92,8 @@
           if (this.searchClick) this.checkSearchData = Object.assign({}, this.searchData);
           let result = await findOperatePageList(para, this.checkSearchData);
           this.loading = false;
-          this.list = result.data.list || [];
-          this.totalElement = result.data.totalData;
+          this.list = result.dataList || [];
+          this.totalElement = result.totalCount;
           this.searchClick = false;
         } catch (e) {
           this.loading = false;
@@ -147,6 +143,7 @@
         }).then(async () => {
           await deleteFun({id: row.id});
           this.$Notice.success({title: '删除成功'});
+          this.currentChange(1);
         }).catch(() => {
         });
       }

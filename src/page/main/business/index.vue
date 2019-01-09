@@ -14,7 +14,7 @@
     </div>
     <div class="table-content">
       <el-table
-        :data="tableList"
+        :data="list"
         v-loading="loading"
         :element-loading-text="loadingText"
         style="width: 100%"
@@ -123,8 +123,8 @@
           if (this.searchClick) this.checkSearchData = Object.assign({}, this.searchData);
           let result = await findOperatePageList(para, this.checkSearchData);
           this.loading = false;
-          this.list = result.data.list || [];
-          this.totalElement = result.data.totalData;
+          this.list = result.dataList || [];
+          this.totalElement = result.totalCount;
           this.searchClick = false;
         } catch (e) {
           this.loading = false;
