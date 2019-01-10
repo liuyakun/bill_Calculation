@@ -32,15 +32,16 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="codeName"
+          prop="cardNum"
           label="卡号名称"
           show-overflow-tooltip
           align="center">
         </el-table-column>
         <el-table-column label="操作" align="center" width="200px" fixed="right">
           <template slot-scope="scope">
-            <a @click="clickCommission(scope.row)">佣金</a>
-            <a @click="clickTask(scope.row)">任务</a>
+            <a style="margin: 0px 5px;" @click="clickCommission(scope.row)">佣金</a>
+            <a style="margin: 0px 5px;" @click="clickTask(scope.row)">任务</a>
+            <a style="margin: 0px 5px;" @click="clickBind(scope.row)">绑定卡号</a>
           </template>
         </el-table-column>
       </el-table>
@@ -80,12 +81,31 @@
         <Button type="ghost" style="margin-left: 8px" @click="exportData.show = false">取消</Button>
       </div>
     </Modal>
+    <Modal v-model="bindData.show" :mask-closable="false">
+      <p slot="header" class="lk-modal-title">
+        <span>绑定卡号</span>
+      </p>
+      <div style="text-align:left">
+        <Form ref="bindForm" :model="bindFormData" :rules="bindData.bindRuleValidate" :label-width="90">
+          <FormItem label="卡号" prop="cardId">
+            <i-select v-model="bindFormData.cardId" placeholder="卡号" filterable clearable>
+              <Option v-for="item in bindData.selectList" :value="item.id" :key="item.id">{{ item.cardid }}</Option>
+            </i-select>
+          </FormItem>
+        </Form>
+      </div>
+      <div slot="footer">
+        <Button type="success" :loading="bindData.loading" @click="bindSubmit('bindForm')">提交</Button>
+        <Button type="ghost" style="margin-left: 8px" @click="bindData.show = false">取消</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
   import XLSX from 'xlsx';
   import list from '@/js/mixins/list';
-  import { findOperatePageList, importTask } from '@/service/businessService/businessMService';
+  import { findOperatePageList, importTask, modifyFun } from '@/service/businessService/businessMService';
+  import { codeSelectList } from '@/service/codeService/codeMService';
   export default {
     mixins: [list],
     data () {
@@ -109,8 +129,22 @@
           error: false,
           errorList: [],
           businessName: null
-        } // 导入信息
+        }, // 导入信息
+        bindFormData: {},
+        bindData: {
+          selectList: [],
+          show: false,
+          bindRuleValidate: {
+            cardId: [
+              {required: true, type: 'number', message: '不能为空', trigger: 'blur change'}
+            ]
+          },
+          loading: false
+        }
       };
+    },
+    created () {
+      this.codeSelectList();
     },
     methods: {
       async _getList () {
@@ -135,6 +169,34 @@
       search () {
         this.searchClick = true;
         this.currentChange(1);
+      },
+      // 获取卡号下拉框
+      async codeSelectList () {
+        let result = await codeSelectList();
+        this.bindData.selectList = result.dataList || [];
+      },
+      // 点击绑定卡号
+      clickBind (row) {
+        this.bindFormData = row;
+        this.bindData.show = true;
+      },
+      bindSubmit (name) {
+        this.$refs[name].validate(async (valid) => {
+          try {
+            if (valid) {
+              this.bindData.loading = true;
+              this.$Notice.success({title: '绑定成功'});
+              await modifyFun(this.bindFormData);
+              this.currentChange(1);
+              this.bindData.loading = false;
+              this.bindData.show = false;
+            } else {
+              this.$Notice.warning({title: '信息未填写完整'});
+            }
+          } catch (e) {
+            this.bindData.show = false;
+          }
+        });
       },
       add () {
         this.exportData.businessName = null;

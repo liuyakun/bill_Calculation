@@ -20,7 +20,7 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="taskDate"
+          prop="dateTask"
           label="任务日期"
           min-width="150"
           show-overflow-tooltip
@@ -116,7 +116,8 @@
             limit: this.searchData.limit
           };
           if (this.searchClick) this.checkSearchData = Object.assign({}, this.searchData);
-          let result = await findOperatePageList(para, this.checkSearchData);
+          const res = this.$route.query;
+          let result = await findOperatePageList(para, {businessId: res.id});
           this.loading = false;
           this.list = result.dataList || [];
           this.totalElement = result.totalCount;
