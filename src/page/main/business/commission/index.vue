@@ -65,7 +65,7 @@
         <span>修改</span>
       </p>
       <div style="text-align:left">
-        <Form ref="form" :model="modalFormData" :rules="ruleValidate" :label-width="90">
+        <Form ref="form" :model="modalFormData" :rules="ruleValidate" :label-width="120">
           <FormItem label="最小价格（元）" prop="priceMin">
             <i-input v-model="modalFormData.priceMin" placeholder="最小价格" :disabled ="true" :maxlength="20"></i-input>
           </FormItem>
