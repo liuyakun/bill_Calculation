@@ -32,16 +32,23 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="cardNum"
+          prop="cardName"
           label="卡号名称"
           show-overflow-tooltip
           align="center">
         </el-table-column>
-        <el-table-column label="操作" align="center" width="200px" fixed="right">
+        <el-table-column
+          prop="nameReferrer"
+          label="介绍人姓名"
+          show-overflow-tooltip
+          align="center">
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="220px" fixed="right">
           <template slot-scope="scope">
+            <a style="margin: 0px 5px;" @click="clickDetail(scope.row)">查看</a>
             <a style="margin: 0px 5px;" @click="clickCommission(scope.row)">佣金</a>
             <a style="margin: 0px 5px;" @click="clickTask(scope.row)">任务</a>
-            <a style="margin: 0px 5px;" @click="clickBind(scope.row)">绑定卡号</a>
+            <a style="margin: 0px 5px;" @click="clickBind(scope.row)">绑定</a>
           </template>
         </el-table-column>
       </el-table>
@@ -83,13 +90,18 @@
     </Modal>
     <Modal v-model="bindData.show" :mask-closable="false">
       <p slot="header" class="lk-modal-title">
-        <span>绑定卡号</span>
+        <span>绑定</span>
       </p>
       <div style="text-align:left">
         <Form ref="bindForm" :model="bindFormData" :rules="bindData.bindRuleValidate" :label-width="90">
           <FormItem label="卡号" prop="cardId">
             <i-select v-model="bindFormData.cardId" placeholder="卡号" filterable clearable>
-              <Option v-for="item in bindData.selectList" :value="item.id" :key="item.id">{{ item.cardid }}</Option>
+              <Option v-for="item in bindData.selectList" :value="item.id" :key="item.id" :label="item.cardName"></Option>
+            </i-select>
+          </FormItem>
+          <FormItem label="介绍人" prop="referrerId">
+            <i-select v-model="bindFormData.referrerId" placeholder="介绍人" filterable clearable>
+              <Option v-for="item in bindData.selectList1" :value="item.id" :key="item.id" :label="item.nameReferrer"></Option>
             </i-select>
           </FormItem>
         </Form>
@@ -99,6 +111,17 @@
         <Button type="ghost" style="margin-left: 8px" @click="bindData.show = false">取消</Button>
       </div>
     </Modal>
+    <Modal v-model="detailData.show" :mask-closable="false">
+      <p slot="header" class="lk-modal-title">
+        <span>查看</span>
+      </p>
+      <div style="text-align:center">
+        <span style="margin: 0 20px;font-size: 18px">{{detailData.name}}</span>
+        <span style="margin: 0 20px;font-size: 18px">{{detailData.billTotal}}</span>
+        <span style="margin: 0 20px;font-size: 18px">${{detailData.receivable}}</span>
+      </div>
+      <div slot="footer"></div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -106,6 +129,8 @@
   import list from '@/js/mixins/list';
   import { findOperatePageList, importTask, modifyFun } from '@/service/businessService/businessMService';
   import { codeSelectList } from '@/service/codeService/codeMService';
+  import { referrerSelectList } from '@/service/introducerService/introducerMService';
+  import { findOperatePageList2 } from '@/service/homeService/homeMService';
   export default {
     mixins: [list],
     data () {
@@ -120,6 +145,12 @@
         ],
         importModalShow: false,
         bindForm: {},
+        detailData: {
+          show: false,
+          name: '',
+          billTotal: 0,
+          receivable: 0
+        },
         exportData: {
           show: false,
           partFile: null,
@@ -133,9 +164,13 @@
         bindFormData: {},
         bindData: {
           selectList: [],
+          selectList1: [],
           show: false,
           bindRuleValidate: {
             cardId: [
+              {required: true, type: 'number', message: '不能为空', trigger: 'blur change'}
+            ],
+            referrerId: [
               {required: true, type: 'number', message: '不能为空', trigger: 'blur change'}
             ]
           },
@@ -145,6 +180,7 @@
     },
     created () {
       this.codeSelectList();
+      this.referrerSelectList();
     },
     methods: {
       async _getList () {
@@ -170,10 +206,31 @@
         this.searchClick = true;
         this.currentChange(1);
       },
+      // 查看详情
+      async clickDetail (row) {
+        let lowDate = new Date();
+        lowDate.setDate(lowDate.getDate() + 1);
+        let paylaod = {
+          startTime: this._hyTool.DateFormat(new Date(lowDate), 'yyyy-MM-dd'),
+          endTime: this._hyTool.DateFormat(new Date(lowDate), 'yyyy-MM-dd'),
+          businessId: row.id
+        };
+        let result = await findOperatePageList2({page: 1, limit: 200}, paylaod);
+        let temp = result.dataList || [];
+        this.detailData.name = temp[0].businessName;
+        this.detailData.billTotal = temp[0].billTotal;
+        this.detailData.receivable = temp[0].receivable;
+        this.detailData.show = true;
+      },
       // 获取卡号下拉框
       async codeSelectList () {
         let result = await codeSelectList();
         this.bindData.selectList = result.dataList || [];
+      },
+      // 获取介绍人下拉框
+      async referrerSelectList () {
+        let result = await referrerSelectList();
+        this.bindData.selectList1 = result.dataList || [];
       },
       // 点击绑定卡号
       clickBind (row) {
@@ -251,6 +308,8 @@
             console.log(payload);
             await importTask(payload);
             _this.$Notice.success({title: '导入成功'});
+            _this.exportData.show = false;
+            _this.currentChange(1);
             _this.exportData.loading = false;
             _this.$Spin.hide();
           } catch (e) {
@@ -260,7 +319,7 @@
         };
         reader.readAsBinaryString(f);
       },
-      // 导入格式转换
+      // 导入格式转换 -- 每日明细
       importFormat (array) {
         try {
           let newArray = [];

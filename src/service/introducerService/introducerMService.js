@@ -7,6 +7,7 @@ const pageListApi = '/api/plat/referrer/queryPageableData/{page}/{limit}';      
 const addApi = '/api/plat/referrer/create';                          // 新增                  method 'post'
 const modifyApi = '/api/plat/referrer/modify';                    // 修改                  method 'post'
 const deleteApi = '/api/plat/referrer/del';                       // 删除                  method 'delete'
+const referrerSelectListApi = '/api/plat/referrer/queryPageableData/1/100';          // 下拉列表              method 'get'
 
 // 分页列表
 export const findOperatePageList = (opt, para) => fetch.post(apiFormat(pageListApi, opt), {params: para});
@@ -19,3 +20,6 @@ export const modifyFun = (payload) => fetch.post(modifyApi, payload);
 
 // 修改
 export const deleteFun = (para) => fetch.delete(deleteApi, {params: para});
+
+// 分页列表
+export const referrerSelectList = () => fetch.post(referrerSelectListApi);

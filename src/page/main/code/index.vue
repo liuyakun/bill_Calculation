@@ -22,8 +22,14 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="cardid"
-          label="帐号卡号"
+          prop="cardName"
+          label="卡号名称"
+          show-overflow-tooltip
+          align="center">
+        </el-table-column>
+        <el-table-column
+          prop="cardNum"
+          label="卡号"
           show-overflow-tooltip
           align="center">
         </el-table-column>
@@ -77,11 +83,22 @@
         modalFormData: {},
         modalFormItem: [
           {
-            key: 'cardid',
-            title: '帐号卡号'
+            key: 'cardName',
+            title: '卡号名称'
+          },
+          {
+            key: 'cardNum',
+            title: '卡号'
           }
         ],
-        ruleValidate: {}
+        ruleValidate: {
+          cardName: [
+            {required: true, message: '卡号名称不能为空', trigger: 'blur change'}
+          ],
+          cardNum: [
+            {required: true, message: '卡号不能为空', trigger: 'blur change'}
+          ]
+        }
       };
     },
     methods: {
@@ -104,7 +121,7 @@
       clickAddOrUpdate (row) {
         if (row) {
           this.title = '修改';
-          this.modalFormData = Object.assign(row);
+          this.modalFormData = Object.assign({}, row);
         } else {
           this.title = '新增';
           this.modalFormData = {};

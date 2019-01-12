@@ -27,6 +27,12 @@
           show-overflow-tooltip
           align="center">
         </el-table-column>
+        <el-table-column
+          prop="pushMoney"
+          label="提成（元）"
+          show-overflow-tooltip
+          align="center">
+        </el-table-column>
         <el-table-column label="操作" align="center" width="200px" fixed="right">
           <template slot-scope="scope">
             <a @click="clickAddOrUpdate(scope.row)">修改</a>
@@ -76,9 +82,20 @@
           {
             key: 'nameReferrer',
             title: '介绍人姓名'
+          },
+          {
+            key: 'pushMoney',
+            title: '提成（元）'
           }
         ],
-        ruleValidate: {}
+        ruleValidate: {
+          nameReferrer: [
+            {required: true, message: '介绍人姓名不能为空', trigger: 'blur change'}
+          ],
+          pushMoney: [
+            {required: true, message: '提成不能为空', trigger: 'blur change'}
+          ]
+        }
       };
     },
     methods: {
@@ -104,7 +121,8 @@
       clickAddOrUpdate (row) {
         if (row) {
           this.title = '修改';
-          this.modalFormData = Object.assign(row);
+          this.modalFormData = Object.assign({}, row);
+          this.modalFormData.pushMoney = this.modalFormData.pushMoney.toString();
         } else {
           this.title = '新增';
           this.modalFormData = {};

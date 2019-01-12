@@ -3,8 +3,8 @@
 */
 <template>
   <div class="content">
-    <div class="lk-search-bar">
-      {{businessName}} ---- 任务
+    <div class="lk-search-bar" style="color: #47bac2; font-size: 18px;">
+      {{businessName}} —— 任务列表
     </div>
     <div class="table-content">
       <el-table

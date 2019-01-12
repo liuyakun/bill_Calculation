@@ -3,8 +3,8 @@
 */
 <template>
   <div class="content">
-    <div class="lk-search-bar">
-       {{businessName}} ---- 佣金管理
+    <div class="lk-search-bar" style="color: #47bac2; font-size: 18px;">
+       {{businessName}} —— 佣金管理
     </div>
     <div class="table-content">
       <el-table
@@ -21,28 +21,28 @@
         </el-table-column>
         <el-table-column
           prop="priceMin"
-          label="最小价格"
+          label="最小价格（元）"
           show-overflow-tooltip
           min-width="120"
           align="center">
         </el-table-column>
         <el-table-column
           prop="priceMax"
-          label="最大价格"
+          label="最大价格（元）"
           min-width="120"
           show-overflow-tooltip
           align="center">
         </el-table-column>
         <el-table-column
           prop="commission"
-          label="佣金"
+          label="佣金（元）"
           min-width="120"
           show-overflow-tooltip
           align="center">
         </el-table-column>
         <el-table-column
           prop="commissionCost"
-          label="成本佣金"
+          label="成本佣金（元）"
           min-width="120"
           show-overflow-tooltip
           align="center">
@@ -66,16 +66,16 @@
       </p>
       <div style="text-align:left">
         <Form ref="form" :model="modalFormData" :rules="ruleValidate" :label-width="90">
-          <FormItem label="最小价格" prop="priceMin">
+          <FormItem label="最小价格（元）" prop="priceMin">
             <i-input v-model="modalFormData.priceMin" placeholder="最小价格" :disabled ="true" :maxlength="20"></i-input>
           </FormItem>
-          <FormItem label="最大价格" prop="priceMax">
+          <FormItem label="最大价格（元）" prop="priceMax">
             <i-input v-model="modalFormData.priceMax"  placeholder="最大价格" :disabled ="true" :maxlength="20"></i-input>
           </FormItem>
-          <FormItem label="佣金" prop="commission">
+          <FormItem label="佣金（元）" prop="commission">
             <InputNumber :min="1" v-model="modalFormData.commission" style="width: 100%"></InputNumber>
           </FormItem>
-          <FormItem label="成本佣金" prop="commissionCost">
+          <FormItem label="成本佣金（元）" prop="commissionCost">
             <InputNumber :min="1" v-model="modalFormData.commissionCost" style="width: 100%"></InputNumber>
           </FormItem>
         </Form>
