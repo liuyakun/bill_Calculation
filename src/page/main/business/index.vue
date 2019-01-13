@@ -38,17 +38,18 @@
           align="center">
         </el-table-column>
         <el-table-column
-          prop="nameReferrer"
+          prop="referrerName"
           label="介绍人姓名"
           show-overflow-tooltip
           align="center">
         </el-table-column>
-        <el-table-column label="操作" align="center" width="220px" fixed="right">
+        <el-table-column label="操作" align="center" width="260px" fixed="right">
           <template slot-scope="scope">
             <a style="margin: 0px 5px;" @click="clickDetail(scope.row)">查看</a>
             <a style="margin: 0px 5px;" @click="clickCommission(scope.row)">佣金</a>
             <a style="margin: 0px 5px;" @click="clickTask(scope.row)">任务</a>
             <a style="margin: 0px 5px;" @click="clickBind(scope.row)">绑定</a>
+            <a style="margin: 0px 5px;" @click="clickDel(scope.row)">删除</a>
           </template>
         </el-table-column>
       </el-table>
@@ -118,7 +119,7 @@
       <div style="text-align:center">
         <span style="margin: 0 20px;font-size: 18px">{{detailData.name}}</span>
         <span style="margin: 0 20px;font-size: 18px">{{detailData.billTotal}}</span>
-        <span style="margin: 0 20px;font-size: 18px">${{detailData.receivable}}</span>
+        <span style="margin: 0 20px;font-size: 18px">￥{{detailData.receivable}}</span>
       </div>
       <div slot="footer"></div>
     </Modal>
@@ -127,10 +128,10 @@
 <script>
   import XLSX from 'xlsx';
   import list from '@/js/mixins/list';
-  import { findOperatePageList, importTask, modifyFun } from '@/service/businessService/businessMService';
+  import { findOperatePageList, importTask, modifyFun, deleteFun } from '@/service/businessService/businessMService';
   import { codeSelectList } from '@/service/codeService/codeMService';
   import { referrerSelectList } from '@/service/introducerService/introducerMService';
-  import { findOperatePageList2 } from '@/service/homeService/homeMService';
+  import { findOperatePageList2, initSummary } from '@/service/homeService/homeMService';
   export default {
     mixins: [list],
     data () {
@@ -263,6 +264,18 @@
         this.exportData.loading = false;
         this.exportData.show = true;
       },
+      clickDel (row) {
+        this.$confirm('确定删除？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+          await deleteFun({id: row.id});
+          this.$Notice.success({title: '删除成功'});
+          this.currentChange(1);
+        }).catch(() => {
+        });
+      },
       clickCommission (row) {
         this.$router.push({path: '/main/business/commission', query: {id: row.id, name: row.name}});
       },
@@ -308,6 +321,7 @@
             console.log(payload);
             await importTask(payload);
             _this.$Notice.success({title: '导入成功'});
+            await initSummary();
             _this.exportData.show = false;
             _this.currentChange(1);
             _this.exportData.loading = false;

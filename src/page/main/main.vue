@@ -61,7 +61,7 @@
     components: {
       titleHeader
     },
-    created () {},
+    async created () {},
     methods: {}
   };
 </script>

@@ -3,42 +3,140 @@
 */
 <style lang="scss">
   @import 'index';
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 160px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+  }
+  .el-table__expand-icon {
+    height: 30px;
+  }
 </style>
 <template>
   <div class="content" style="height: 90%;">
     <Button style="float: right;" icon="ios-download-outline" type="primary" shape="circle" @click="importData"></Button>
     <div class="clear"></div>
-    <Tabs type="card">
-      <TabPane label="总计">
-        <div class="total-main">
-          <div class="row-one">
-            <div class="row-one-content"><span>日期</span></div>
-            <div class="row-one-content"><span>总单</span></div>
-            <div class="row-one-content"><span>总收</span></div>
-            <div class="row-one-content"><span>总放</span></div>
-            <div class="row-one-content"><span>余</span></div>
-            <div class="row-one-content"><span>剩余</span></div>
-            <div class="row-one-content"><span>实际收款</span></div>
-            <div class="row-one-content"><span>差额</span></div>
-            <div class="row-one-content"><span>备注</span></div>
-            <div class="clear"></div>
-          </div>
-          <div class="row-price" v-for="item,index in summaryList" :key="index" :class="index===0?'today-background':''">
-            <div class="row-one-content"><span>{{item.dateSummary}}</span></div>
-            <div class="row-one-content"><span>{{item.billSum}}</span></div>
-            <div class="row-one-content"><span>{{item.receivableSum}}</span></div>
-            <div class="row-one-content"><span>{{item.putSum}}</span></div>
-            <div class="row-one-content"><span>{{item.residue}}</span></div>
-            <div class="row-one-content"><span>{{item.residueLast}}</span></div>
-            <div class="row-one-content"><span>{{item.receipt}}</span></div>
-            <div class="row-one-content"><span>{{item.balance}}</span></div>
-            <div class="row-one-content"><span>{{item.note}}</span></div>
-            <div class="clear"></div>
-          </div>
-          <div class="clear"></div>
+    <Tabs type="card" @on-click="clickTab">
+      <TabPane label="总计" name="one">
+        <div class="table-content">
+          <el-table
+            :data="list"
+            style="width: 100%"
+            class="text-center">
+            <el-table-column
+              type="index"
+              label="序号"
+              width="80"
+              align="center">
+            </el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="props">
+                <el-form label-position="left" inline class="demo-table-expand">
+                  <el-form-item v-for="item, index in props.row.cardAccountCollectDtos" :key="index + 'card'" :label="`卡号：${item.cardName}`">
+                    <span>￥{{ item.cardReceiptSum }}</span>
+                  </el-form-item>
+                  <el-form-item v-for="item, index in props.row.referrerAccountCollectDtos" :key="index + 'referrerreferrer'" :label="`介绍人：${item.referrerName}`">
+                    <span>￥{{ item.referrerReceiptSum }}</span>
+                  </el-form-item>
+                </el-form>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="dateSummary"
+              label="日期"
+              show-overflow-tooltip
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="billSum"
+              label="总单（件）"
+              show-overflow-tooltip
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="receivableSum"
+              label="总收（元）"
+              show-overflow-tooltip
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="putSum"
+              label="总放（元）"
+              show-overflow-tooltip
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="residue"
+              label="余（元）"
+              show-overflow-tooltip
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="residueLast"
+              label="剩余（元）"
+              show-overflow-tooltip
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="receipt"
+              label="实收（元）"
+              show-overflow-tooltip
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="balance"
+              label="差额（元）"
+              show-overflow-tooltip
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="note"
+              label="备注"
+              show-overflow-tooltip
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="cardReceiptSum"
+              label="账户总额"
+              show-overflow-tooltip
+              align="center">
+            </el-table-column>
+            <el-table-column
+              prop="referrerReceiptSum"
+              label="介绍人总提成"
+              show-overflow-tooltip
+              align="center">
+            </el-table-column>
+            <el-table-column label="操作" align="center" width="200px" fixed="right">
+              <template slot-scope="scope">
+                <a @click="clickUpdate(scope.row, 1)">输入备注</a>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- 分页 -->
+          <hy-page v-show="pageShow"
+                   :current-page="searchData.page"
+                   :page-size="searchData.limit"
+                   :total-element="totalElement"
+                   @current-change="currentChange"></hy-page>
         </div>
       </TabPane>
-      <TabPane label="每日商家账目">
+      <TabPane label="每日商家账目" name="two">
+        <div class="lk-search-bar">
+          <Form label-position="right" inline :label-width="60">
+            <FormItem label="查询日期">
+              <DatePicker v-model="searchDate" type="date" placeholder="Select date" style="width: 200px"></DatePicker>
+            </FormItem>
+            <i-button type="success" icon="ios-search" class="lk-search-button" @click="search" shape="circle" :loading="loading">搜索</i-button>
+          </Form>
+        </div>
         <div class="table-content">
           <el-table
             :data="list"
@@ -91,7 +189,7 @@
             </el-table-column>
             <el-table-column label="操作" align="center" width="200px" fixed="right">
               <template slot-scope="scope">
-                <a @click="clickUpdate(scope.row)">输入实收</a>
+                <a @click="clickUpdate(scope.row, 2)">输入实收</a>
               </template>
             </el-table-column>
           </el-table>
@@ -125,7 +223,7 @@
   import HyFormItem from '@/components/formItem/formItem.vue';
   import XLSX from 'xlsx';
   import saveAs from '@/js/libs/FileSaver';
-  import { findOperatePageList, modifyFun, getSummary } from '@/service/homeService/homeMService';
+  import { findOperatePageList, modifyFun, getSummary, modifySummary } from '@/service/homeService/homeMService';
   export default {
     mixins: [list],
     components: {
@@ -133,27 +231,13 @@
     },
     data () {
       return {
-        summaryList: [],
-        testData: [
-          {dateSummary: '2019-01-06', billSum: 80, receivableSum: 19888, putSum: 25558, residue: 90, residueLast: 50, receipt: 20000, balance: 20, note: '11111'},
-          {dateSummary: '2019-01-06', billSum: 80, receivableSum: 19888, putSum: 25558, residue: 90, residueLast: 50, receipt: 20000, balance: 20, note: '11111'},
-          {dateSummary: '2019-01-06', billSum: 80, receivableSum: 19888, putSum: 25558, residue: 90, residueLast: 50, receipt: 20000, balance: 20, note: '11111'},
-          {dateSummary: '2019-01-06', billSum: 80, receivableSum: 19888, putSum: 25558, residue: 90, residueLast: 50, receipt: 20000, balance: 20, note: '11111'},
-          {dateSummary: '2019-01-06', billSum: 80, receivableSum: 19888, putSum: 25558, residue: 90, residueLast: 50, receipt: 20000, balance: 20, note: '11111'},
-          {dateSummary: '2019-01-06', billSum: 80, receivableSum: 19888, putSum: 25558, residue: 90, residueLast: 50, receipt: 20000, balance: 20, note: '11111'},
-          {dateSummary: '2019-01-06', billSum: 80, receivableSum: 19888, putSum: 25558, residue: 90, residueLast: 50, receipt: 20000, balance: 20, note: '11111'},
-          {dateSummary: '2019-01-06', billSum: 80, receivableSum: 19888, putSum: 25558, residue: 90, residueLast: 50, receipt: 20000, balance: 20, note: '11111'}
-        ],
-        importData1: [
-          {'商家名称': 'xxx商家', '单': 20, '应收': 1234, '放': 1234, '实收': 1234, '余': 20},
-          {'商家名称': 'xxx商家', '单': 20, '应收': 1234, '放': 1234, '实收': 1234, '余': 20},
-          {'商家名称': 'xxx商家', '单': 20, '应收': 1234, '放': 1234, '实收': 1234, '余': 20},
-          {'商家名称': 'xxx商家', '单': 20, '应收': 1234, '放': 1234, '实收': 1234, '余': 20},
-          {'商家名称': 'xxx商家', '单': 20, '应收': 1234, '放': 1234, '实收': 1234, '余': 20}
-        ],
+        summaryList: [], // 每日
+        summaryCodeList: [], // 卡号
+        summaryReferrerList: [], // 介绍人
         modalFormShow: false,
         modalBtnLoading: false,
         modalFormData: {},
+        modalFormType: 1,
         modalFormItem: [
           {
             key: 'receipt',
@@ -166,36 +250,62 @@
           ]
         },
         searchClick: false,
-        checkSearchData: {}
+        checkSearchData: {},
+        searchDate: null,
+        tabValue: 'one'
       };
     },
-    created () {
-      this.getSummary();
+    async created () {
+      try {
+        let lowDate = new Date();
+        lowDate.setDate(lowDate.getDate() + 1);
+        this.searchDate = this._hyTool.DateFormat(new Date(lowDate), 'yyyy-MM-dd');
+      } catch (e) {
+      }
     },
     methods: {
-      async getSummary () {
-        let lowDate = new Date();
-        lowDate.setDate(lowDate.getDate() - 15);
-        let payload = {
-          startTime: this._hyTool.DateFormat(new Date(), 'yyyy-MM-dd'),
-          endTime: this._hyTool.DateFormat(new Date(lowDate), 'yyyy-MM-dd')
-        };
-        let result = await getSummary(payload);
-        this.summaryList = result.dataList || [];
-        console.log(result);
-      },
       async _getList () {
         try {
           this.loading = true;
           let para = {page: this.searchData.page, limit: this.searchData.limit};
-          let paylaod = {
-            startTime: this._hyTool.DateFormat(new Date(), 'yyyy-MM-dd'),
-            endTime: this._hyTool.DateFormat(new Date(), 'yyyy-MM-dd')
+          if (!this.searchDate) {
+            let lowDate = new Date();
+            lowDate.setDate(lowDate.getDate() + 1);
+            this.searchDate = this._hyTool.DateFormat(new Date(lowDate), 'yyyy-MM-dd');
+          }
+          let payload = {
+            startTime: this._hyTool.DateFormat(new Date(this.searchDate), 'yyyy-MM-dd'),
+            endTime: this._hyTool.DateFormat(new Date(this.searchDate), 'yyyy-MM-dd')
           };
           if (this.searchClick) this.checkSearchData = Object.assign({}, this.searchData);
-          let result = await findOperatePageList(para, paylaod);
+          let result = [];
+          if (this.tabValue === 'one') {
+            result = await getSummary(para);
+            this.list = result.dataList || [];
+            this.list.forEach(item => {
+              let referrerReceiptSum = 0;
+              let cardReceiptSum = 0;
+              if (!item.cardAccountCollectDtos) item.cardAccountCollectDtos = [];
+              if (!item.referrerAccountCollectDtos) item.referrerAccountCollectDtos = [];
+              if (item.cardAccountCollectDtos && item.cardAccountCollectDtos.length) {
+                item.cardAccountCollectDtos.forEach(it => {
+                  cardReceiptSum = cardReceiptSum + it.cardReceiptSum;
+                });
+              }
+              if (item.referrerAccountCollectDtos && item.referrerAccountCollectDtos.length) {
+                item.referrerAccountCollectDtos.forEach(it => {
+                  referrerReceiptSum = referrerReceiptSum + it.referrerReceiptSum;
+                });
+              }
+              item.referrerReceiptSum = referrerReceiptSum;
+              item.cardReceiptSum = cardReceiptSum;
+            });
+          } else {
+            result = await findOperatePageList(para, payload);
+            this.list = result.dataList || [];
+          }
+
           this.loading = false;
-          this.list = result.dataList || [];
           this.totalElement = result.totalCount;
           this.searchClick = false;
         } catch (e) {
@@ -204,9 +314,19 @@
           this.totalElement = 0;
         }
       },
-      clickUpdate (row) {
+      clickUpdate (row, type) {
+        this.modalFormType = type;
         this.modalFormData = Object.assign({}, row);
-        this.modalFormData.receipt = this.modalFormData.receipt.toString();
+        if (type === 1) {
+          this.modalFormItem = [
+            {key: 'note', title: '备注'}
+          ];
+        } else {
+          this.modalFormItem = [
+            {key: 'receipt', title: '实际收款'}
+          ];
+          this.modalFormData.receipt = this.modalFormData.receipt.toString();
+        }
         this.modalFormShow = true;
       },
       addOrUpdateSubmit (name) {
@@ -214,7 +334,15 @@
           try {
             if (valid) {
               this.modalBtnLoading = true;
-              await modifyFun(this.modalFormData);
+              if (this.modalFormType === 1) {
+                let payload = {
+                  id: this.modalFormData.id,
+                  note: this.modalFormData.note
+                };
+                await modifySummary(payload);
+              } else {
+                await modifyFun(this.modalFormData);
+              }
               this.$Notice.success({title: '设置成功'});
               this.modalBtnLoading = false;
               this.modalFormShow = false;
@@ -227,10 +355,16 @@
           }
         });
       },
+      clickTab (val) {
+        this.tabValue = val;
+        this.currentChange(1);
+      },
       async importData () {
+        let lowDate = new Date();
+        lowDate.setDate(lowDate.getDate() + 1);
         let payload = {
           startTime: this._hyTool.DateFormat(new Date(), 'yyyy-MM-dd'),
-          endTime: this._hyTool.DateFormat(new Date(), 'yyyy-MM-dd')
+          endTime: this._hyTool.DateFormat(new Date(lowDate), 'yyyy-MM-dd')
         };
         let result = await findOperatePageList({page: 1, limit: 200}, payload);
         let temp = result.dataList || [];
@@ -247,44 +381,51 @@
             }
           );
         });
-        let importData1 = this.importFormat2(this.summaryList);
+        let importData1 = [];
+        let result2 = await getSummary({page: 1, limit: 15});
+        let temp2 = result2.dataList || [];
+        temp2.forEach(item => {
+          let referrerReceiptSum = 0;
+          let cardReceiptSum = 0;
+          if (!item.cardAccountCollectDtos) item.cardAccountCollectDtos = [];
+          if (!item.referrerAccountCollectDtos) item.referrerAccountCollectDtos = [];
+          if (item.cardAccountCollectDtos && item.cardAccountCollectDtos.length) {
+            item.cardAccountCollectDtos.forEach(it => {
+              cardReceiptSum = cardReceiptSum + it.cardReceiptSum;
+            });
+          }
+          if (item.referrerAccountCollectDtos && item.referrerAccountCollectDtos.length) {
+            item.referrerAccountCollectDtos.forEach(it => {
+              referrerReceiptSum = referrerReceiptSum + it.referrerReceiptSum;
+            });
+          }
+          item.referrerReceiptSum = referrerReceiptSum;
+          item.cardReceiptSum = cardReceiptSum;
+        });
+        temp2.forEach(item => {
+          importData1.push(
+            {
+              '日期': item.dateSummary,
+              '总单（件）': item.billSum,
+              '总收（元）': item.receivableSum,
+              '总放（元）': item.putSum,
+              '余（元）': item.residue,
+              '剩余（元）': item.residueLast,
+              '差额（元）': item.balance,
+              '备注': item.note,
+              '账户总额（元）': item.cardReceiptSum,
+              '介绍人总提成（元）': item.referrerReceiptSum
+            }
+          );
+        });
         this.downloadExl(importData1, importData2);
-      },
-      // 总计
-      importFormat2 (dataList) {
-        let importList = [];
-        for (var i = 0; i < 9; i++) {
-          importList.push(['']);
-        }
-        importList[0].push('日期');
-        importList[1].push('总单');
-        importList[2].push('总收');
-        importList[3].push('总放');
-        importList[4].push('余');
-        importList[5].push('剩余');
-        importList[6].push('实际收款');
-        importList[7].push('差额');
-        importList[8].push('备注');
-        for (let i = 0; i < dataList.length; i++) {
-          var temp = dataList[i];
-          importList[0].push(temp.dateSummary);
-          importList[1].push(temp.billSum);
-          importList[2].push(temp.receivableSum);
-          importList[3].push(temp.putSum);
-          importList[4].push(temp.residue);
-          importList[5].push(temp.residueLast);
-          importList[6].push(temp.receipt);
-          importList[7].push(temp.balance);
-          importList[8].push(temp.note);
-        }
-        return importList;
       },
       downloadExl (data1, data2) {
         try {
           const wopts = {bookType: 'xlsx', bookSST: false, type: 'binary'}; // 这里的数据是用来定义导出的格式类型
           const wb = { SheetNames: ['总计', '每日商家账目'], Sheets: {}, Props: {} };
           wb.Sheets['总计'] = XLSX.utils.json_to_sheet(data1);// 通过json_to_sheet转成单页(Sheet)数据
-          // wb.Sheets['总计']['!cols'] = [{width: 15}, {width: 20}, {width: 15}, {width: 15}, {width: 30}, {width: 30}, {width: 15}, {width: 10}, {width: 60}];
+          wb.Sheets['总计']['!cols'] = [{width: 15}, {width: 15}, {width: 15}, {width: 15}, {width: 15}, {width: 15}, {width: 15}, {width: 15}, {width: 15}, {width: 20}];
           wb.Sheets['每日商家账目'] = XLSX.utils.json_to_sheet(data2);// 通过json_to_sheet转成单页(Sheet)数据
           wb.Sheets['每日商家账目']['!cols'] = [{width: 30}, {width: 15}, {width: 15}, {width: 15}, {width: 15}, {width: 15}];
           saveAs(new Blob([this.s2ab(XLSX.write(wb, wopts))], {type: 'application/octet-stream'}), '账目明细' + '.' + (wopts.bookType === 'biff2' ? 'xls' : wopts.bookType));
