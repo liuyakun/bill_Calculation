@@ -131,7 +131,7 @@
   import { findOperatePageList, importTask, modifyFun, deleteFun } from '@/service/businessService/businessMService';
   import { codeSelectList } from '@/service/codeService/codeMService';
   import { referrerSelectList } from '@/service/introducerService/introducerMService';
-  import { findOperatePageList2, initSummary } from '@/service/homeService/homeMService';
+  import { findOperatePageList2 } from '@/service/homeService/homeMService';
   export default {
     mixins: [list],
     data () {
@@ -243,8 +243,8 @@
           try {
             if (valid) {
               this.bindData.loading = true;
-              this.$Notice.success({title: '绑定成功'});
               await modifyFun(this.bindFormData);
+              this.$Notice.success({title: '绑定成功'});
               this.currentChange(1);
               this.bindData.loading = false;
               this.bindData.show = false;
@@ -321,7 +321,6 @@
             console.log(payload);
             await importTask(payload);
             _this.$Notice.success({title: '导入成功'});
-            await initSummary();
             _this.exportData.show = false;
             _this.currentChange(1);
             _this.exportData.loading = false;

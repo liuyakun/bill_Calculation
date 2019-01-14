@@ -161,7 +161,7 @@
             if (valid) {
               this.modalBtnLoading = true;
               await modifyFun(this.modalFormData);
-              this.$Notice.success('修改成功');
+              this.$Notice.success({title: '修改成功'});
               this.currentChange(1);
               this.modalBtnLoading = false;
               this.modalFormShow = false;

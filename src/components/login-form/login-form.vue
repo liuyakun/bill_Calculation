@@ -10,7 +10,8 @@
     <FormItem prop="password">
       <Input type="password" v-model="form.password" placeholder="请输入密码">
         <span slot="prepend">
-          <Icon :size="14" type="md-lock"></Icon>
+          <!--<Icon :size="14" type="ios-lock-outline" />-->
+          <Icon :size="14" type="ios-pie" />
         </span>
       </Input>
     </FormItem>
@@ -43,7 +44,7 @@ export default {
   data () {
     return {
       form: {
-        userName: 'super_admin',
+        userName: 'root',
         password: ''
       }
     };

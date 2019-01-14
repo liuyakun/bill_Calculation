@@ -223,7 +223,7 @@
   import HyFormItem from '@/components/formItem/formItem.vue';
   import XLSX from 'xlsx';
   import saveAs from '@/js/libs/FileSaver';
-  import { findOperatePageList, modifyFun, getSummary, modifySummary } from '@/service/homeService/homeMService';
+  import { findOperatePageList, modifyFun, getSummary, modifySummary, initSummary } from '@/service/homeService/homeMService';
   export default {
     mixins: [list],
     components: {
@@ -257,9 +257,11 @@
     },
     async created () {
       try {
+        await initSummary();
         let lowDate = new Date();
         lowDate.setDate(lowDate.getDate() + 1);
         this.searchDate = this._hyTool.DateFormat(new Date(lowDate), 'yyyy-MM-dd');
+        this._getList();
       } catch (e) {
       }
     },

@@ -37,8 +37,12 @@
       }
     },
     methods: {
-      handleSubmit () {
-        this.$router.push('/main/home');
+      handleSubmit (value) {
+        if (value.userName === 'root' && value.password === 'root123') {
+          this.$router.push('/main/home');
+        } else {
+          this.$Notice.info({title: '账户名密码不正确'});
+        }
       }
     }
   };
