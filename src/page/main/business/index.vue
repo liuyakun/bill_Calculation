@@ -167,14 +167,7 @@
           selectList: [],
           selectList1: [],
           show: false,
-          bindRuleValidate: {
-            cardId: [
-              {required: true, type: 'number', message: '不能为空', trigger: 'blur change'}
-            ],
-            referrerId: [
-              {required: true, type: 'number', message: '不能为空', trigger: 'blur change'}
-            ]
-          },
+          bindRuleValidate: {},
           loading: false
         }
       };
