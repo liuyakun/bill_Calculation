@@ -63,6 +63,9 @@
         <MenuItem name="/main/introducer">
           介绍人管理
         </MenuItem>
+        <MenuItem name="/main/userManage">
+          用户管理
+        </MenuItem>
       </Menu>
     </div>
     <div class="util-tool">
@@ -74,7 +77,7 @@
     </div>
     <div class="user-content">
       <a>
-        <span class="user-info">欢迎，管理员</span>
+        <span class="user-info">欢迎，{{userInfo.nickName}}</span>
         <Avatar src="static/images/user.png"/>
       </a>
     </div>
@@ -85,7 +88,8 @@
     name: 'titleHeader',
     data () {
       return {
-        theme1: 'light'
+        theme1: 'light',
+        userInfo: {}
       };
     },
     computed: {
@@ -94,7 +98,9 @@
       }
     },
     async mounted () {
-      console.log(this.$route.path);
+      let userInfoResult = this._hyTool.getStore('userInfo');
+      this.userInfo = JSON.parse(userInfoResult);
+      console.log(userInfoResult);
     },
     methods: {
       selectMenu (value) {
@@ -106,6 +112,8 @@
           cancelButtonText: '点错了',
           type: 'warning'
         }).then(async () => {
+          this._hyTool.removeStore('token');
+          this._hyTool.removeStore('userInfo');
           this.$Notice.success({title: '注销成功!'});
           this.$router.push('/login');
         }).catch(() => {

@@ -19,6 +19,7 @@ const businessCommission = _import('main/business/commission/index');
 const businessTask = _import('main/business/task/index');
 const code = _import('main/code/index');
 const introducer = _import('main/introducer/index');
+const userManage = _import('main/userManage/index');
 
 export default [
   // 未匹配到则404页面
@@ -51,7 +52,8 @@ export default [
           {path: 'business/commission', component: businessCommission},
           {path: 'business/task', component: businessTask},
           {path: 'code', component: code},
-          {path: 'introducer', component: introducer}
+          {path: 'introducer', component: introducer},
+          {path: 'userManage', component: userManage}
         ]
       }
     ]
