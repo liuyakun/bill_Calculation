@@ -54,8 +54,8 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="200px" fixed="right">
           <template slot-scope="scope">
-            <a @click="clickAddOrUpdate(scope.row)">修改</a>
-            <a @click="clickDelete(scope.row)">删除</a>
+            <a v-show="scope.row.type !== 1" @click="clickAddOrUpdate(scope.row)">修改</a>
+            <a v-show="scope.row.type !== 1" @click="clickDelete(scope.row)">删除</a>
             <a @click="resetPassword(scope.row.id)">重置密码</a>
           </template>
         </el-table-column>
@@ -225,7 +225,10 @@
             if (valid) {
               this.modalBtnLoading = true;
               if (this.title === '新增') {
-                await userAdd(this.modalFormData);
+                let payload = Object.assign({}, this.modalFormData);
+                payload.password = MD5(payload.password);
+                payload.password = payload.password.toLocaleUpperCase();
+                await userAdd(payload);
                 this.searchClick = true;
                 this.searchData = {page: 1, limit: 10};
               } else {

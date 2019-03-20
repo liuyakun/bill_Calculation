@@ -63,7 +63,10 @@
         <MenuItem name="/main/introducer">
           介绍人管理
         </MenuItem>
-        <MenuItem name="/main/userManage">
+        <MenuItem name="/main/defaultCommission" v-show="userInfo.type === 1">
+          默认佣金
+        </MenuItem>
+        <MenuItem name="/main/userManage" v-show="userInfo.type === 1">
           用户管理
         </MenuItem>
       </Menu>
@@ -100,7 +103,6 @@
     async mounted () {
       let userInfoResult = this._hyTool.getStore('userInfo');
       this.userInfo = JSON.parse(userInfoResult);
-      console.log(userInfoResult);
     },
     methods: {
       selectMenu (value) {

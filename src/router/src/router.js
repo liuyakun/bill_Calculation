@@ -16,6 +16,7 @@ const main = _import('main/main');
 const home = _import('main/home/home');
 const business = _import('main/business/index');
 const businessCommission = _import('main/business/commission/index');
+const defaultCommission = _import('main/defaultCommission/index');
 const businessTask = _import('main/business/task/index');
 const code = _import('main/code/index');
 const introducer = _import('main/introducer/index');
@@ -53,7 +54,8 @@ export default [
           {path: 'business/task', component: businessTask},
           {path: 'code', component: code},
           {path: 'introducer', component: introducer},
-          {path: 'userManage', component: userManage}
+          {path: 'userManage', component: userManage},
+          {path: 'defaultCommission', component: defaultCommission}
         ]
       }
     ]

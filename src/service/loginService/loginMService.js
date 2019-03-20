@@ -30,4 +30,4 @@ export const userUpdate = (payload) => fetch.post(userUpdateApi, payload);
 export const userDel = (para) => fetch.delete(userDelApi, {params: para});
 
 // 重置密码
-export const resetPwd = (para) => fetch.delete(resetPwdApi, {params: para});
+export const resetPwd = (payload) => fetch.post(resetPwdApi, payload);

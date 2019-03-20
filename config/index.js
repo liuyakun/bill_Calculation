@@ -7,10 +7,10 @@ var base = 'http://10.0.14.101:9090';
 module.exports = {
   build: {
     env: require('./prod.env'),
-    index: path.resolve(__dirname, '../appStore/index.html'),
-    assetsRoot: path.resolve(__dirname, '../appStore'),
+    index: path.resolve(__dirname, '../buildData/index.html'),
+    assetsRoot: path.resolve(__dirname, '../buildData'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/appStore/',
+    assetsPublicPath: './',
     productionSourceMap: true,
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
