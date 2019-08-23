@@ -1,5 +1,5 @@
 /**
-* 描述：卡号管理
+* 描述：用户管理
 */
 <template>
   <div class="content">
@@ -118,14 +118,7 @@
         modalBtnLoading: false,
         modalFormData: {},
         modalFormItem: [],
-        ruleValidate: {
-          cardName: [
-            {required: true, message: '卡号名称不能为空', trigger: 'blur change'}
-          ],
-          cardNum: [
-            {required: true, message: '卡号不能为空', trigger: 'blur change'}
-          ]
-        },
+        ruleValidate: {},
         formLoading: false,
         modalFormResetShow: false,
         modalFormResetData: {},

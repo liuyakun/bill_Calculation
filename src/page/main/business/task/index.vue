@@ -1,10 +1,19 @@
 /**
 * 描述：商家 --- 任务
 */
+<style lang="scss">
+  .fl-le{float: left;}
+  .fl-rg{float: right;}
+  .clear{clear: both;}
+</style>
 <template>
   <div class="content">
-    <div class="lk-search-bar" style="color: #47bac2; font-size: 18px;">
-      {{businessName}} —— 任务列表
+    <div class="lk-search-bar">
+      <div class="fl-le" style="color: #47bac2; font-size: 18px;line-height: 36px;">{{businessName}} —— 任务列表</div>
+      <div class="fl-rg">
+        <el-button type="danger" :disabled="!isSelectIds" @click="clickDel">删除</el-button>
+      </div>
+      <div class="clear"></div>
     </div>
     <div class="table-content">
       <el-table
@@ -12,7 +21,13 @@
         v-loading="loading"
         :element-loading-text="loadingText"
         style="width: 100%"
-        class="text-center">
+        class="text-center"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          type="selection"
+          align="center"
+          width="55">
+        </el-table-column>
         <el-table-column
           type="index"
           label="序号"
@@ -87,7 +102,7 @@
 </template>
 <script>
   import list from '@/js/mixins/list';
-  import { findOperatePageList } from '@/service/taskService/taskMService';
+  import { findOperatePageList, deleteFun } from '@/service/taskService/taskMService';
   export default {
     mixins: [list],
     data () {
@@ -100,8 +115,14 @@
         loadingText: '暂无数据',
         tableList: [
           {id: 1, taskDate: '2019-01-05', singleTime: 8, businessUrl: 'www.baidu.com', keyWord: 'keyWord', takenNumber: 5, unitPrice: '145', specifications: 'xxxx', remark: '111'}
-        ]
+        ],
+        selectIds: []
       };
+    },
+    computed: {
+      isSelectIds () {
+        return this.selectIds.length;
+      }
     },
     created () {
       const res = this.$route.query;
@@ -111,10 +132,7 @@
       async _getList () {
         try {
           this.loading = true;
-          let para = {
-            page: this.searchData.page,
-            limit: this.searchData.limit
-          };
+          let para = {page: this.searchData.page, limit: this.searchData.limit};
           if (this.searchClick) this.checkSearchData = Object.assign({}, this.searchData);
           const res = this.$route.query;
           let result = await findOperatePageList(para, {businessId: res.id});
@@ -131,6 +149,29 @@
       search () {
         this.searchClick = true;
         this.currentChange(1);
+      },
+      handleSelectionChange (val) {
+        if (val && val.length) {
+          val.forEach(item => {
+          this.selectIds.push(item.id);
+          });
+        } else {
+          this.selectIds = [];
+        }
+        console.log(this.selectIds);
+      },
+      clickDel () {
+        this.$confirm('确定删除？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+          const res = this.$route.query;
+          let ids = this.selectIds.join(',');
+          let params = {businessId: res.id, ids: ids};
+          await deleteFun(params);
+          this._getList(1);
+        }).catch(() => {});
       }
     }
   };

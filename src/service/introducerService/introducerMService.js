@@ -18,7 +18,7 @@ export const addFun = (payload) => fetch.post(addApi, payload);
 // 修改
 export const modifyFun = (payload) => fetch.post(modifyApi, payload);
 
-// 修改
+// 删除
 export const deleteFun = (para) => fetch.delete(deleteApi, {params: para});
 
 // 分页列表

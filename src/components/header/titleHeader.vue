@@ -102,7 +102,7 @@
     },
     async mounted () {
       let userInfoResult = this._hyTool.getStore('userInfo');
-      this.userInfo = JSON.parse(userInfoResult);
+      this.userInfo = JSON.parse(userInfoResult) || {};
     },
     methods: {
       selectMenu (value) {

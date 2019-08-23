@@ -21,7 +21,7 @@
 </style>
 <template>
   <div class="content" style="height: 90%;">
-    <Button style="float: right;" icon="ios-download-outline" type="primary" shape="circle" @click="importData"></Button>
+    <Button style="float: right;margin-right: 10px;" icon="ios-download-outline" type="primary" shape="circle" @click="importData"></Button>
     <div class="clear"></div>
     <Tabs type="card" @on-click="clickTab">
       <TabPane label="总计" name="one">
