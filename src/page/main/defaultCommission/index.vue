@@ -64,10 +64,10 @@
       <div style="text-align:left">
         <Form ref="form" :model="modalFormData" :rules="ruleValidate" :label-width="120">
           <FormItem label="最小价格（元）" prop="priceMin">
-            <i-input v-model="modalFormData.priceMin" placeholder="最小价格" :disabled ="true" :maxlength="20"></i-input>
+            <i-input v-model="modalFormData.priceMin" placeholder="最小价格" :maxlength="20"></i-input>
           </FormItem>
           <FormItem label="最大价格（元）" prop="priceMax">
-            <i-input v-model="modalFormData.priceMax"  placeholder="最大价格" :disabled ="true" :maxlength="20"></i-input>
+            <i-input v-model="modalFormData.priceMax"  placeholder="最大价格" :maxlength="20"></i-input>
           </FormItem>
           <FormItem label="佣金（元）" prop="commission">
             <InputNumber :min="1" v-model="modalFormData.commission" style="width: 100%"></InputNumber>
